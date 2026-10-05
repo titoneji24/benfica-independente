@@ -72,7 +72,7 @@ function MatchPage() {
   const grouped = useMemo(() => {
     const g: Record<string, LineupEntry[]> = {};
     for (const e of lineup) (g[e.player.position] ??= []).push(e);
-    for (const k in g) g[k].sort((a, b) => (a.role === b.role ? (a.player.number ?? 99) - (b.player.number ?? 99) : a.role === "titular" ? -1 : 1));
+    for (const k in g) g[k]!.sort((a, b) => (a.role === b.role ? (a.player.number ?? 99) - (b.player.number ?? 99) : a.role === "titular" ? -1 : 1));
     return g;
   }, [lineup]);
 
@@ -168,10 +168,10 @@ function MatchPage() {
         {GROUPS.filter((g) => grouped[g.key]?.length).map((g) => (
           <section key={g.key}>
             <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              {g.label} ({grouped[g.key].length})
+              {g.label} ({grouped[g.key]!.length})
             </p>
             <div className="space-y-4">
-              {grouped[g.key].map((e) => {
+              {grouped[g.key]!.map((e) => {
                 const r = resultMap.get(e.player.id);
                 return (
                   <PlayerCard
@@ -182,7 +182,7 @@ function MatchPage() {
                     disabled={!canVote}
                     onRate={(n) => setDraft((d) => ({ ...d, [e.player.id]: n }))}
                     onMotm={() => setMotm((m) => (m === e.player.id ? null : e.player.id))}
-                    result={revealed && r ? { avg: r.avg_score, count: Number(r.rating_count), mine: mine.data?.ratings[e.player.id] } : undefined}
+                    result={revealed && r ? { avg: r.avg_score, count: Number(r.rating_count), ...(mine.data?.ratings[e.player.id] != null ? { mine: mine.data.ratings[e.player.id]! } : {}) } : undefined}
                   />
                 );
               })}

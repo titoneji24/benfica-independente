@@ -21,10 +21,10 @@ function ResetPage() {
   const navigate = useNavigate();
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (pw.length < 8) return toast.error("Mínimo 8 caracteres");
-    if (pw !== pw2) return toast.error("As passwords não coincidem");
+    if (pw.length < 8) { toast.error("Mínimo 8 caracteres"); return; }
+    if (pw !== pw2) { toast.error("As passwords não coincidem"); return; }
     const { error } = await supabase.auth.updateUser({ password: pw });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Password atualizada");
     navigate({ to: "/player-ratings" });
   }

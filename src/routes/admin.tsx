@@ -80,12 +80,12 @@ function Admin() {
 function NewMatch({ onDone }: { onDone: () => void }) {
   const [f, setF] = useState({ opponent: "", competition: "Liga Portugal", round: "", kickoff: "", venue: "Estádio da Luz", is_home: true });
   async function save() {
-    if (!f.opponent || !f.kickoff) return toast.error("Adversário e data são obrigatórios");
+    if (!f.opponent || !f.kickoff) { toast.error("Adversário e data são obrigatórios"); return; }
     const d = f.kickoff.slice(0, 10);
     const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const slug = f.is_home ? `benfica-vs-${slugify(f.opponent)}-${d}` : `${slugify(f.opponent)}-vs-benfica-${d}`;
     const { error } = await supabase.from("matches").insert({ ...f, round: f.round || null, kickoff: new Date(f.kickoff).toISOString(), slug });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Jogo criado");
     setF({ ...f, opponent: "", round: "", kickoff: "" });
     onDone();
@@ -111,7 +111,7 @@ function NewPlayer({ onDone }: { onDone: () => void }) {
   async function save() {
     if (!f.name) return;
     const { error } = await supabase.from("players").insert({ name: f.name, position: f.position, number: f.number ? Number(f.number) : null, photo_url: f.photo_url || null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Jogador adicionado");
     setF({ name: "", position: "MED", number: "", photo_url: "" });
     onDone();
@@ -158,7 +158,7 @@ function MatchEditor({ matchId, players, onDone }: { matchId: string; players: P
       opponent_goals: m!.opponent_goals === "" ? null : Number(m!.opponent_goals),
       voting_open: m!.voting_open,
     }).eq("id", matchId);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Jogo atualizado"); onDone();
   }
 
@@ -166,17 +166,17 @@ function MatchEditor({ matchId, players, onDone }: { matchId: string; players: P
     await supabase.from("match_players").delete().eq("match_id", matchId);
     const order: Record<string, number> = { GR: 1, DEF: 2, MED: 3, AV: 4, TRE: 9 };
     const rows = Object.entries(lineup).filter(([, r]) => r).map(([player_id, role]) => ({
-      match_id: matchId, player_id, role: role as LineupRole, sort_order: order[players.find((p) => p.id === player_id)?.position ?? "MED"],
+      match_id: matchId, player_id, role: role as LineupRole, sort_order: order[players.find((p) => p.id === player_id)?.position ?? "MED"] ?? 3,
     }));
     const { error } = await supabase.from("match_players").insert(rows);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Convocados guardados"); onDone();
   }
 
   async function deleteMatch() {
     if (!confirm("Apagar este jogo e todas as avaliações?")) return;
     const { error } = await supabase.from("matches").delete().eq("id", matchId);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     onDone();
   }
 
