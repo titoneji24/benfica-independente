@@ -14,16 +14,280 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      match_players: {
+        Row: {
+          id: string
+          match_id: string
+          player_id: string
+          role: Database["public"]["Enums"]["lineup_role"]
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          player_id: string
+          role?: Database["public"]["Enums"]["lineup_role"]
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          player_id?: string
+          role?: Database["public"]["Enums"]["lineup_role"]
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_players_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          benfica_goals: number | null
+          competition: string
+          created_at: string
+          id: string
+          is_home: boolean
+          kickoff: string
+          opponent: string
+          opponent_goals: number | null
+          round: string | null
+          slug: string
+          venue: string | null
+          voting_open: boolean
+        }
+        Insert: {
+          benfica_goals?: number | null
+          competition: string
+          created_at?: string
+          id?: string
+          is_home?: boolean
+          kickoff: string
+          opponent: string
+          opponent_goals?: number | null
+          round?: string | null
+          slug: string
+          venue?: string | null
+          voting_open?: boolean
+        }
+        Update: {
+          benfica_goals?: number | null
+          competition?: string
+          created_at?: string
+          id?: string
+          is_home?: boolean
+          kickoff?: string
+          opponent?: string
+          opponent_goals?: number | null
+          round?: string | null
+          slug?: string
+          venue?: string | null
+          voting_open?: boolean
+        }
+        Relationships: []
+      }
+      motm_votes: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+          player_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+          player_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+          player_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "motm_votes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "motm_votes_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          number: number | null
+          photo_url: string | null
+          position: Database["public"]["Enums"]["player_position"]
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          number?: number | null
+          photo_url?: string | null
+          position: Database["public"]["Enums"]["player_position"]
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          number?: number | null
+          photo_url?: string | null
+          position?: Database["public"]["Enums"]["player_position"]
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      ratings: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+          player_id: string
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+          player_id: string
+          score: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+          player_id?: string
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_match_results: {
+        Args: { _match_id: string }
+        Returns: {
+          avg_score: number
+          motm_count: number
+          motm_total: number
+          player_id: string
+          rating_count: number
+        }[]
+      }
+      get_match_vote_counts: {
+        Args: never
+        Returns: {
+          match_id: string
+          voters: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      lineup_role: "titular" | "suplente" | "treinador"
+      player_position: "GR" | "DEF" | "MED" | "AV" | "TRE"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +414,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      lineup_role: ["titular", "suplente", "treinador"],
+      player_position: ["GR", "DEF", "MED", "AV", "TRE"],
+    },
   },
 } as const
