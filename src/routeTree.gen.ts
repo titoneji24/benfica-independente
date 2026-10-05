@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlayerRatingsIndexRouteImport } from './routes/player-ratings.index'
 import { Route as PlayerRatingsSlugRouteImport } from './routes/player-ratings.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayerRatingsIndexRoute = PlayerRatingsIndexRouteImport.update({
@@ -31,30 +49,61 @@ const PlayerRatingsSlugRoute = PlayerRatingsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings': typeof PlayerRatingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/player-ratings/$slug' | '/player-ratings/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/perfil'
+    | '/reset-password'
+    | '/player-ratings/$slug'
+    | '/player-ratings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/player-ratings/$slug' | '/player-ratings'
-  id: '__root__' | '/' | '/player-ratings/$slug' | '/player-ratings/'
+  to:
+    | '/'
+    | '/auth'
+    | '/perfil'
+    | '/reset-password'
+    | '/player-ratings/$slug'
+    | '/player-ratings'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/perfil'
+    | '/reset-password'
+    | '/player-ratings/$slug'
+    | '/player-ratings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  PerfilRoute: typeof PerfilRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   PlayerRatingsSlugRoute: typeof PlayerRatingsSlugRoute
   PlayerRatingsIndexRoute: typeof PlayerRatingsIndexRoute
 }
@@ -66,6 +115,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/player-ratings/': {
@@ -87,6 +157,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  PerfilRoute: PerfilRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   PlayerRatingsSlugRoute: PlayerRatingsSlugRoute,
   PlayerRatingsIndexRoute: PlayerRatingsIndexRoute,
 }
