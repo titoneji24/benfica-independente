@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlayerRatingsIndexRouteImport } from './routes/player-ratings.index'
+import { Route as PlayerRatingsSlugRouteImport } from './routes/player-ratings.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const PlayerRatingsIndexRoute = PlayerRatingsIndexRouteImport.update({
   path: '/player-ratings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayerRatingsSlugRoute = PlayerRatingsSlugRouteImport.update({
+  id: '/player-ratings/$slug',
+  path: '/player-ratings/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings': typeof PlayerRatingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/player-ratings/'
+  fullPaths: '/' | '/player-ratings/$slug' | '/player-ratings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/player-ratings'
-  id: '__root__' | '/' | '/player-ratings/'
+  to: '/' | '/player-ratings/$slug' | '/player-ratings'
+  id: '__root__' | '/' | '/player-ratings/$slug' | '/player-ratings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PlayerRatingsSlugRoute: typeof PlayerRatingsSlugRoute
   PlayerRatingsIndexRoute: typeof PlayerRatingsIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayerRatingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/player-ratings/$slug': {
+      id: '/player-ratings/$slug'
+      path: '/player-ratings/$slug'
+      fullPath: '/player-ratings/$slug'
+      preLoaderRoute: typeof PlayerRatingsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PlayerRatingsSlugRoute: PlayerRatingsSlugRoute,
   PlayerRatingsIndexRoute: PlayerRatingsIndexRoute,
 }
 export const routeTree = rootRouteImport
