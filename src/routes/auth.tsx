@@ -47,7 +47,7 @@ function AuthPage() {
     try {
       if (mode === "signup") {
         const p = signupSchema.safeParse(f);
-        if (!p.success) { toast.error(p.error.issues[0].message); return; }
+        if (!p.success) { toast.error(p.error.issues[0]?.message ?? "Dados inválidos"); return; }
         const { error } = await supabase.auth.signUp({
           email: p.data.email, password: p.data.password,
           options: { emailRedirectTo: window.location.origin, data: { username: p.data.username } },
