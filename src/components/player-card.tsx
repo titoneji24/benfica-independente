@@ -4,12 +4,12 @@ import { POSITION_LABEL, SCALE, initials, type LineupEntry } from "@/lib/ratings
 
 type Props = {
   entry: LineupEntry;
-  value?: number;
+  value?: number | undefined;
   isMotm: boolean;
   disabled: boolean;
   onRate: (n: number) => void;
   onMotm: () => void;
-  result?: { avg: number | null; count: number; mine?: number };
+  result?: { avg: number | null; count: number; mine?: number } | undefined;
 };
 
 export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, result }: Props) {

@@ -3,17 +3,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Home, Star, Users, User, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/benfica-independente-logo.png.asset.json";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const SOON = ["Notícias", "Podcasts", "Vídeos", "Benfica"];
+const SOON = ["Notícias", "Podcasts", "Vídeos"];
 
 export function Crest({ className = "h-9 w-9" }: { className?: string }) {
   return (
-    <span className={`relative grid shrink-0 place-items-center rounded-full bg-gradient-red ring-2 ring-gold ${className}`}>
-      <span className="font-display text-[0.95em] font-bold leading-none text-primary-foreground">BI</span>
-    </span>
+    <img src={logoAsset.url} alt="Logotipo Benfica Independente" className={`shrink-0 object-contain ${className}`} />
   );
 }
 
@@ -44,7 +43,7 @@ export function SiteHeader() {
           {SOON.map((s) => (
             <span key={s} className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">{s}</span>
           ))}
-          <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>Player Ratings</Link>
+          <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>jogos</Link>
           <span className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">Comunidade</span>
         </nav>
         <div className="flex items-center gap-2">
@@ -100,7 +99,10 @@ export function SiteFooter() {
             <p className="text-sm text-ink-foreground/60">Feito por benfiquistas, para benfiquistas.</p>
           </div>
         </div>
-        <p className="text-xs text-ink-foreground/50">Projeto independente, sem ligação oficial ao Sport Lisboa e Benfica.</p>
+        <div className="text-xs text-ink-foreground/50">
+          <p>Projeto independente, sem ligação oficial ao Sport Lisboa e Benfica.</p>
+          <p className="mt-2">© 2026 Benfica Independente</p>
+        </div>
       </div>
     </footer>
   );
