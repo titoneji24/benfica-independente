@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Use the shared Crest component with the uploaded logo asset pointer for site branding so header and footer stay consistent; derive the public favicon from the same image.
