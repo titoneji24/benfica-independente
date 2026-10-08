@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Home, Star, Users, User, LogOut, Shield } from "lucide-react";
+import { Home, Star, Users, User, LogOut, Shield, Facebook, Instagram, Youtube } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/benfica-independente-logo.png.asset.json";
@@ -88,16 +88,46 @@ export function MobileNav() {
   );
 }
 
+function XMark({ className = "h-[18px] w-[18px]" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" className={className}>
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.153h7.594l5.243 6.931ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+    </svg>
+  );
+}
+
+const SOCIALS = [
+  { label: "Facebook", href: "https://www.facebook.com/slbindependente", icon: Facebook },
+  { label: "X", href: "https://x.com/slbindependente", icon: XMark },
+  { label: "YouTube", href: "https://www.youtube.com/channel/UCig3rOWj-2NsbOXRBUaiQqQ?view_as=subscriber", icon: Youtube },
+  { label: "Instagram", href: "https://www.instagram.com/slbindependente", icon: Instagram },
+];
+
 export function SiteFooter() {
   return (
     <footer className="mt-24 bg-gradient-ink pb-24 text-ink-foreground md:pb-0">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <Crest />
           <div>
             <p className="font-display text-lg font-bold uppercase">Benfica Independente</p>
             <p className="text-sm text-ink-foreground/60">Feito por benfiquistas, para benfiquistas.</p>
           </div>
+        </div>
+        <div className="flex items-center gap-2.5">
+          {SOCIALS.map(({ label, href, icon: I }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="grid h-10 w-10 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground transition-all hover:-translate-y-0.5 hover:border-ink-foreground/50 hover:bg-ink-foreground/10"
+            >
+              <I className="h-[18px] w-[18px]" />
+            </a>
+          ))}
         </div>
         <div className="text-xs text-ink-foreground/50">
           <p>Projeto independente, sem ligação oficial ao Sport Lisboa e Benfica.</p>
