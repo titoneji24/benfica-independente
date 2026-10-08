@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Mic, PenLine, PlayCircle, Star } from "lucide-react";
-import hero from "@/assets/hero-luz.jpg";
+import heroAsset from "@/assets/header-estadio.png.asset.json";
 import { matchesQuery } from "@/lib/ratings";
 import { FeaturedMatch, MatchRow } from "@/components/match-bits";
 
@@ -23,7 +23,7 @@ function Index() {
   return (
     <div>
       <section className="relative isolate overflow-hidden bg-ink text-ink-foreground">
-        <img src={hero} alt="Estádio cheio de adeptos benfiquistas" width={1600} height={912} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-55" />
+        <img src={heroAsset.url} alt="Estádio cheio de adeptos benfiquistas" width={851} height={315} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-55" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-transparent" />
         <div className="mx-auto max-w-6xl px-4 pb-20 pt-24 sm:pt-32">
           <p className="animate-rise text-xs font-bold uppercase tracking-[0.3em] text-gold">Comunidade independente · desde sempre</p>
