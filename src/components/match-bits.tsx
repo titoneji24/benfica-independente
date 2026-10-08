@@ -47,7 +47,7 @@ export function FeaturedMatch({ m, voters, dark = false }: { m: Match; voters?: 
           >
             {m.voting_open ? "Avaliar jogadores" : "Ver resultados"} <ChevronRight className="h-5 w-5" />
           </Link>
-          {voters !== undefined && <p className="text-xs opacity-70">{voters.toLocaleString("pt-PT")} benfiquistas já avaliaram</p>}
+          {voters !== undefined && <p className="text-xs opacity-70">{voters.toLocaleString("pt-PT")} benfiquista já avaliou</p>}
         </div>
       </div>
     </div>
