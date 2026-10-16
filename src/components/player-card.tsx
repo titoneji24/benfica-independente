@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { Check, Loader2, Star } from "lucide-react";
 import { POSITION_LABEL, SCALE, initials, type LineupEntry } from "@/lib/ratings";
+import { canChooseMotm } from "@/lib/voting";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   entry: LineupEntry;
@@ -9,13 +11,18 @@ type Props = {
   disabled: boolean;
   onRate: (n: number) => void;
   onMotm: () => void;
+  onConfirm: () => void;
+  saving: boolean;
+  confirmed: boolean;
+  error?: string | undefined;
+  motmDisabled: boolean;
   result?: { avg: number | null; count: number; mine?: number } | undefined;
 };
 
-export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, result }: Props) {
+export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onConfirm, saving, confirmed, error, motmDisabled, result }: Props) {
   const { player, role } = entry;
   const [hover, setHover] = useState<number | null>(null);
-  const isCoach = role === "treinador";
+  const isCoach = !canChooseMotm(role, player.position);
   const shown = hover ?? value ?? null;
 
   return (
@@ -45,7 +52,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, res
         <div className="min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="truncate font-display text-2xl font-bold uppercase leading-tight">{player.name}</h3>
+              <h3 className="break-words font-display text-2xl font-bold uppercase leading-tight">{player.name}</h3>
               <p className="text-sm text-muted-foreground">
                 {POSITION_LABEL[player.position]}
                 {role === "suplente" && <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-bold">Entrou</span>}
@@ -56,7 +63,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, res
             )}
           </div>
 
-          <div className="mt-2 h-5 text-sm font-semibold">
+       <div className="mt-2 min-h-5 text-sm font-semibold">
             {shown ? (
               <span key={shown} className="animate-rise inline-block">
                 <span className="text-primary">Nota {shown}</span> · {SCALE[shown]}
@@ -72,12 +79,14 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, res
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
           const active = value === n;
           return (
-            <button
+            <Button
+              variant="outline"
               key={n}
               type="button"
-              disabled={disabled}
+              disabled={disabled || saving}
               onMouseEnter={() => setHover(n)}
               onFocus={() => setHover(n)}
+              onBlur={() => setHover(null)}
               onClick={() => onRate(n)}
               aria-pressed={active}
               aria-label={`Nota ${n} — ${SCALE[n]}`}
@@ -88,44 +97,53 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, res
               }`}
             >
               {n}
-            </button>
+            </Button>
           );
         })}
       </div>
 
+      <div className="mt-3" aria-live="polite">
+        {!disabled && (
+          <Button onClick={onConfirm} disabled={saving || value == null || confirmed} className="w-full sm:w-auto">
+            {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
+            {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
+          </Button>
+        )}
+        {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
+        {confirmed && value != null && <p className="mt-3 text-sm font-semibold">A tua nota: {value}/10</p>}
+        {result && confirmed && (
+          <div className="mt-2 text-sm">
+            {result.avg == null || result.count === 0 ? (
+              <p className="text-muted-foreground">Ainda não existem avaliações da comunidade para este jogador</p>
+            ) : (
+              <>
+                <p className="font-semibold">Média da comunidade: <span className="text-primary">{result.avg.toLocaleString("pt-PT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/10</span></p>
+                <p className="text-muted-foreground">{result.count.toLocaleString("pt-PT")} {result.count === 1 ? "avaliação" : "avaliações"}</p>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         {!isCoach ? (
-          <button
+          <Button
+            variant="outline"
             type="button"
-            disabled={disabled}
+            disabled={disabled || motmDisabled}
             onClick={onMotm}
             aria-pressed={isMotm}
-            className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition-all disabled:opacity-50 ${
+            className={`h-auto max-w-full whitespace-normal gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition-all disabled:opacity-50 ${
               isMotm ? "animate-pop border-gold bg-gold text-gold-foreground" : "border-gold/60 text-gold-foreground/80 hover:bg-gold/15"
             }`}
           >
             <Star className={`h-4 w-4 ${isMotm ? "fill-current" : ""}`} />
             {isMotm ? "Melhor em Campo" : "Escolher Melhor em Campo"}
-          </button>
+          </Button>
         ) : (
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Treinador</span>
         )}
 
-        {result && (
-          <div className="flex items-center gap-4 rounded-2xl bg-muted px-4 py-2">
-            {result.mine != null && (
-              <div className="text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">A tua</p>
-                <p className="font-display text-xl font-bold">{result.mine}</p>
-              </div>
-            )}
-            <div className="text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Comunidade</p>
-              <p className="font-display text-xl font-bold text-primary">{result.avg?.toFixed(1) ?? "–"}</p>
-            </div>
-            <p className="text-xs text-muted-foreground">{result.count} aval.</p>
-          </div>
-        )}
       </div>
     </article>
   );
