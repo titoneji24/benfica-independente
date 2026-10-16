@@ -59,6 +59,7 @@ export type Database = {
           competition: string
           created_at: string
           id: string
+          is_demo: boolean
           is_home: boolean
           kickoff: string
           opponent: string
@@ -73,6 +74,7 @@ export type Database = {
           competition: string
           created_at?: string
           id?: string
+          is_demo?: boolean
           is_home?: boolean
           kickoff: string
           opponent: string
@@ -87,6 +89,7 @@ export type Database = {
           competition?: string
           created_at?: string
           id?: string
+          is_demo?: boolean
           is_home?: boolean
           kickoff?: string
           opponent?: string
@@ -259,6 +262,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_match_motm_results: {
+        Args: { _match_id: string }
+        Returns: {
+          motm_count: number
+          motm_total: number
+          player_id: string
+        }[]
+      }
       get_match_results: {
         Args: { _match_id: string }
         Returns: {

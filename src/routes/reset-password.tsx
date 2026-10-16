@@ -10,6 +10,8 @@ export const Route = createFileRoute("/reset-password")({
       { name: "description", content: "Define uma nova password para a tua conta." },
       { property: "og:title", content: "Nova password | Benfica Independente" },
       { property: "og:description", content: "Define uma nova password para a tua conta." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ResetPage,

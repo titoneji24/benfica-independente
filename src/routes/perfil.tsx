@@ -12,6 +12,8 @@ export const Route = createFileRoute("/perfil")({
       { name: "description", content: "As tuas avaliações e escolhas de Melhor em Campo." },
       { property: "og:title", content: "O meu perfil | Benfica Independente" },
       { property: "og:description", content: "Histórico de avaliações na comunidade benfiquista." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Perfil,

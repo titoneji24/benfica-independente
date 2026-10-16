@@ -10,6 +10,8 @@ export const Route = createFileRoute("/player-ratings/")({
       { name: "description", content: "Avalia os jogadores do Benfica depois de cada jogo, de 1 a 10, e vê a média da comunidade." },
       { property: "og:title", content: "Notas dos Benfiquistas — Player Ratings" },
       { property: "og:description", content: "Avalia os jogadores do Benfica depois de cada jogo." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RatingsIndex,

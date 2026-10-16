@@ -14,6 +14,8 @@ export const Route = createFileRoute("/admin")({
       { name: "description", content: "Gestão de jogos, convocados e votações." },
       { property: "og:title", content: "Administração | Benfica Independente" },
       { property: "og:description", content: "Gestão de jogos e votações." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),

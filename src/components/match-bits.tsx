@@ -29,6 +29,7 @@ export function FeaturedMatch({ m, voters, dark = false }: { m: Match; voters?: 
       <div className="relative">
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold uppercase tracking-widest opacity-80">
           <span>{m.competition}{m.round ? ` · ${m.round}` : ""}</span>
+          {m.is_demo && <span>Demonstração</span>}
           {m.voting_open && <span className="rounded-full bg-gold px-2.5 py-1 text-gold-foreground">Avalia agora</span>}
         </div>
         <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -65,6 +66,7 @@ export function MatchRow({ m, voters }: { m: Match; voters: number }) {
       <OutcomePill m={m} />
       <div className="min-w-0">
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{m.round ?? m.competition} · {fmtDate(m.kickoff)}</p>
+        {m.is_demo && <p className="text-xs font-semibold text-muted-foreground">Jogo de demonstração</p>}
         <p className="truncate font-display text-xl font-bold uppercase">
           {s.home} <span className="tabular-nums text-primary">{s.hs}-{s.as}</span> {s.away}
         </p>
