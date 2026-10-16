@@ -15,6 +15,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Cria a tua conta benfiquista para avaliar os jogadores depois de cada jogo." },
       { property: "og:title", content: "Entrar | Benfica Independente" },
       { property: "og:description", content: "Junta-te à comunidade e avalia os jogadores do Benfica." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,

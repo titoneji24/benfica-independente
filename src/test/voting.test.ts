@@ -7,7 +7,7 @@ describe("Independent confirmed ratings", () => {
   it("reveals a successfully saved 8", () => expect(isScoreConfirmed(8, 8)).toBe(true));
   it("does not unlock Pavlidis when Prestianni is saved", () => {
     const saved: Record<string, number> = { prestianni: 8 };
-    expect(isScoreConfirmed(8, saved.pavlidis)).toBe(false);
+    expect(isScoreConfirmed(8, saved["pavlidis"])).toBe(false);
   });
   it("keeps Prestianni visible while evaluating Pavlidis", () => {
     const saved = { prestianni: 8 };
