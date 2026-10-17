@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { matchesQuery, scoreLine, type LineupRole, type Player } from "@/lib/ratings";
+import { matchesQuery, scoreLine, initials, POSITION_LABEL, type LineupRole, type Player } from "@/lib/ratings";
+import { fileToPhotoDataUrl } from "@/lib/photo";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/admin")({
@@ -68,9 +69,10 @@ function Admin() {
             </div>
           </div>
           <NewPlayer onDone={refresh} />
+          <Squad players={players.data ?? []} onDone={refresh} />
         </div>
         <div>
-          {sel ? <MatchEditor key={sel.id} matchId={sel.id} players={players.data ?? []} onDone={refresh} /> : (
+          {sel ? <MatchEditor key={sel.id} matchId={sel.id} players={(players.data ?? []).filter((p) => p.active)} onDone={refresh} /> : (
             <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Escolhe um jogo para editar resultado, convocados e votação.</div>
           )}
         </div>
