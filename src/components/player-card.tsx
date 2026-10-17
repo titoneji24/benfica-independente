@@ -102,23 +102,28 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
         })}
       </div>
 
-      <div className="mt-3" aria-live="polite">
-        {!disabled && (
-          <Button onClick={onConfirm} disabled={saving || value == null || confirmed} className="w-full sm:w-auto">
-            {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
-            {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
-          </Button>
-        )}
-        {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
-        {confirmed && value != null && <p className="mt-3 text-sm font-semibold">A tua nota: {value}/10</p>}
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-3" aria-live="polite">
+        <div className="min-w-0">
+          {!disabled && (
+            <Button onClick={onConfirm} disabled={saving || value == null || confirmed} className="w-full sm:w-auto">
+              {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
+              {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
+            </Button>
+          )}
+          {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
+        </div>
         {result && confirmed && (
-          <div className="mt-2 text-sm">
+          <div className="ml-auto text-right">
             {result.avg == null || result.count === 0 ? (
-              <p className="text-muted-foreground">Ainda não existem avaliações da comunidade para este jogador</p>
+              <p className="text-sm text-muted-foreground">Ainda não existem avaliações dos benfiquistas para este jogador</p>
             ) : (
               <>
-                <p className="font-semibold">Média da comunidade: <span className="text-primary">{result.avg.toLocaleString("pt-PT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/10</span></p>
-                <p className="text-muted-foreground">{result.count.toLocaleString("pt-PT")} {result.count === 1 ? "avaliação" : "avaliações"}</p>
+                <p className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Avaliação dos benfiquistas</p>
+                <p className="animate-rise font-display text-4xl font-extrabold leading-tight text-primary tabular-nums">
+                  {result.avg.toLocaleString("pt-PT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                  <span className="text-lg font-bold text-muted-foreground">/10</span>
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{result.count.toLocaleString("pt-PT")} {result.count === 1 ? "avaliação" : "avaliações"}</p>
               </>
             )}
           </div>
