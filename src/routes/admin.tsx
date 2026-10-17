@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { matchesQuery, scoreLine, type LineupRole, type Player } from "@/lib/ratings";
+import { matchesQuery, scoreLine, initials, POSITION_LABEL, type LineupRole, type Player } from "@/lib/ratings";
+import { fileToPhotoDataUrl } from "@/lib/photo";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/admin")({
@@ -68,9 +69,10 @@ function Admin() {
             </div>
           </div>
           <NewPlayer onDone={refresh} />
+          <Squad players={players.data ?? []} onDone={refresh} />
         </div>
         <div>
-          {sel ? <MatchEditor key={sel.id} matchId={sel.id} players={players.data ?? []} onDone={refresh} /> : (
+          {sel ? <MatchEditor key={sel.id} matchId={sel.id} players={(players.data ?? []).filter((p) => p.active)} onDone={refresh} /> : (
             <div className="rounded-2xl border border-dashed p-10 text-center text-muted-foreground">Escolhe um jogo para editar resultado, convocados e votação.</div>
           )}
         </div>
@@ -108,10 +110,39 @@ function NewMatch({ onDone }: { onDone: () => void }) {
   );
 }
 
+const POS_OPTIONS = (
+  <>
+    <option value="GR">Guarda-redes</option><option value="DEF">Defesa</option><option value="MED">Médio</option><option value="AV">Avançado</option><option value="TRE">Treinador</option>
+  </>
+);
+
+function PhotoPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="flex items-center gap-3">
+      <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border bg-muted text-xs text-muted-foreground">
+        {value ? <img src={value} alt="" className="h-full w-full object-cover" /> : "Sem foto"}
+      </div>
+      <label className="cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold hover:border-primary">
+        {busy ? "A carregar…" : "Carregar foto"}
+        <input type="file" accept="image/*" className="sr-only" onChange={async (e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (!file) return;
+          setBusy(true);
+          try { onChange(await fileToPhotoDataUrl(file)); } catch (err) { toast.error((err as Error).message); }
+          setBusy(false);
+        }} />
+      </label>
+      {value && <button type="button" className="text-xs font-semibold text-destructive" onClick={() => onChange("")}>Remover</button>}
+    </div>
+  );
+}
+
 function NewPlayer({ onDone }: { onDone: () => void }) {
   const [f, setF] = useState({ name: "", position: "MED" as Player["position"], number: "", photo_url: "" });
   async function save() {
-    if (!f.name) return;
+    if (!f.name) { toast.error("Indica o nome"); return; }
     const { error } = await supabase.from("players").insert({ name: f.name, position: f.position, number: f.number ? Number(f.number) : null, photo_url: f.photo_url || null });
     if (error) { toast.error(error.message); return; }
     toast.success("Jogador adicionado");
@@ -123,13 +154,73 @@ function NewPlayer({ onDone }: { onDone: () => void }) {
       <h2 className="font-display text-2xl font-bold uppercase">Novo jogador</h2>
       <input className={input} placeholder="Nome" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
       <div className="grid grid-cols-2 gap-2">
-        <select className={input} value={f.position} onChange={(e) => setF({ ...f, position: e.target.value as Player["position"] })}>
-          <option value="GR">Guarda-redes</option><option value="DEF">Defesa</option><option value="MED">Médio</option><option value="AV">Avançado</option><option value="TRE">Treinador</option>
-        </select>
-        <input className={input} placeholder="Número" value={f.number} onChange={(e) => setF({ ...f, number: e.target.value })} />
+        <select className={input} value={f.position} onChange={(e) => setF({ ...f, position: e.target.value as Player["position"] })}>{POS_OPTIONS}</select>
+        <input className={input} placeholder="Número" inputMode="numeric" value={f.number} onChange={(e) => setF({ ...f, number: e.target.value })} />
       </div>
-      <input className={input} placeholder="URL da foto (opcional)" value={f.photo_url} onChange={(e) => setF({ ...f, photo_url: e.target.value })} />
+      <PhotoPicker value={f.photo_url} onChange={(v) => setF({ ...f, photo_url: v })} />
       <button className={btn} onClick={save}>Adicionar</button>
+    </div>
+  );
+}
+
+function Squad({ players, onDone }: { players: Player[]; onDone: () => void }) {
+  const [editing, setEditing] = useState<string | null>(null);
+  return (
+    <div className="rounded-2xl border bg-card p-5 shadow-soft">
+      <h2 className="mb-3 font-display text-2xl font-bold uppercase">Gerir plantel</h2>
+      <div className="space-y-2">
+        {players.map((p) => editing === p.id
+          ? <PlayerEditor key={p.id} player={p} onClose={() => setEditing(null)} onDone={onDone} />
+          : (
+            <div key={p.id} className={`flex items-center gap-3 rounded-xl border p-2 text-sm ${p.active ? "" : "opacity-50"}`}>
+              <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-muted text-xs font-bold">
+                {p.photo_url ? <img src={p.photo_url} alt={p.name} className="h-full w-full object-cover" /> : initials(p.name)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-semibold">{p.number ?? "–"} · {p.name}</div>
+                <div className="text-xs text-muted-foreground">{POSITION_LABEL[p.position]}{p.active ? "" : " · inativo"}</div>
+              </div>
+              <button className="rounded-lg border px-3 py-1.5 text-xs font-bold" onClick={() => setEditing(p.id)}>Editar</button>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function PlayerEditor({ player, onClose, onDone }: { player: Player; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({ name: player.name, position: player.position, number: player.number?.toString() ?? "", photo_url: player.photo_url ?? "", active: player.active });
+  async function save() {
+    if (!f.name) { toast.error("Indica o nome"); return; }
+    const { error } = await supabase.from("players").update({ name: f.name, position: f.position, number: f.number ? Number(f.number) : null, photo_url: f.photo_url || null, active: f.active }).eq("id", player.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Jogador atualizado"); onClose(); onDone();
+  }
+  async function remove() {
+    if (!confirm(`Apagar ${player.name} do plantel?`)) return;
+    const { error } = await supabase.from("players").delete().eq("id", player.id);
+    if (error) {
+      // Player has votes/lineups: keep history, just hide from the squad.
+      const { error: e2 } = await supabase.from("players").update({ active: false }).eq("id", player.id);
+      if (e2) { toast.error(e2.message); return; }
+      toast.success("Jogador tem avaliações guardadas — ficou inativo (sai das convocatórias, histórico mantido)");
+    } else toast.success("Jogador apagado");
+    onClose(); onDone();
+  }
+  return (
+    <div className="space-y-2 rounded-xl border border-primary bg-accent/40 p-3">
+      <input className={input} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+      <div className="grid grid-cols-2 gap-2">
+        <select className={input} value={f.position} onChange={(e) => setF({ ...f, position: e.target.value as Player["position"] })}>{POS_OPTIONS}</select>
+        <input className={input} placeholder="Número" inputMode="numeric" value={f.number} onChange={(e) => setF({ ...f, number: e.target.value })} />
+      </div>
+      <PhotoPicker value={f.photo_url} onChange={(v) => setF({ ...f, photo_url: v })} />
+      <label className="flex items-center gap-2 text-sm"><Switch checked={f.active} onCheckedChange={(v) => setF({ ...f, active: v })} /> Ativo no plantel</label>
+      <div className="flex flex-wrap gap-2">
+        <button className={btn} onClick={save}>Guardar</button>
+        <button className="rounded-lg border px-4 py-2 text-sm font-bold" onClick={onClose}>Cancelar</button>
+        <button className="ml-auto rounded-lg border px-4 py-2 text-sm font-bold text-destructive" onClick={remove}>Apagar</button>
+      </div>
     </div>
   );
 }
