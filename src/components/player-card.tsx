@@ -59,7 +59,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
               </p>
             </div>
             {player.number != null && (
-              <span className="font-display text-4xl font-extrabold leading-none text-gold tabular-nums">{player.number}</span>
+              <span className="font-display text-4xl font-extrabold leading-none text-primary-foreground/90 tabular-nums">{player.number}</span>
             )}
           </div>
 
@@ -108,7 +108,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
             <Button
               onClick={onConfirm}
               disabled={saving || value == null || confirmed}
-              className={`w-full sm:w-auto ${confirmed ? "bg-gold text-gold-foreground hover:bg-gold/90" : "bg-ink text-ink-foreground hover:bg-ink/90"}`}
+              className={`w-full sm:w-auto ${confirmed ? "bg-primary-foreground text-primary hover:bg-primary-foreground/90" : "bg-ink text-ink-foreground hover:bg-ink/90"}`}
             >
               {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
               {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
@@ -143,10 +143,10 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
             onClick={onMotm}
             aria-pressed={isMotm}
             className={`h-auto max-w-full whitespace-normal gap-2 rounded-full border px-3.5 py-1.5 text-sm font-bold transition-all disabled:opacity-40 ${
-              isMotm ? "animate-pop border-gold bg-gold text-gold-foreground" : "border-gold/70 bg-primary-foreground/10 text-gold hover:bg-gold/20"
+              isMotm ? "animate-pop border-gold bg-gold text-gold-foreground" : "border-primary-foreground/40 bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25"
             }`}
           >
-            <Star className={`h-4 w-4 ${isMotm ? "fill-current" : ""}`} />
+            <Star className={`h-4 w-4 ${isMotm ? "fill-current" : "text-gold"}`} />
             {isMotm ? "Melhor em Campo" : "Escolher Melhor em Campo"}
           </Button>
         ) : (
