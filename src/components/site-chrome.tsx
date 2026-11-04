@@ -43,7 +43,7 @@ export function SiteHeader() {
           {SOON.map((s) => (
             <span key={s} className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">{s}</span>
           ))}
-          <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>jogos</Link>
+          <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>Jogos</Link>
           <span className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">Comunidade</span>
         </nav>
         <div className="flex items-center gap-2">
