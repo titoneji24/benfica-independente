@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlayerRatingsIndexRouteImport } from './routes/player-ratings.index'
 import { Route as PlayerRatingsSlugRouteImport } from './routes/player-ratings.$slug'
@@ -37,6 +38,11 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings': typeof PlayerRatingsIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/perfil': typeof PerfilRoute
+  '/ranking': typeof RankingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/player-ratings/$slug': typeof PlayerRatingsSlugRoute
   '/player-ratings/': typeof PlayerRatingsIndexRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/perfil'
+    | '/ranking'
     | '/reset-password'
     | '/player-ratings/$slug'
     | '/player-ratings/'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/perfil'
+    | '/ranking'
     | '/reset-password'
     | '/player-ratings/$slug'
     | '/player-ratings'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/perfil'
+    | '/ranking'
     | '/reset-password'
     | '/player-ratings/$slug'
     | '/player-ratings/'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   PerfilRoute: typeof PerfilRoute
+  RankingRoute: typeof RankingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   PlayerRatingsSlugRoute: typeof PlayerRatingsSlugRoute
   PlayerRatingsIndexRoute: typeof PlayerRatingsIndexRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   PerfilRoute: PerfilRoute,
+  RankingRoute: RankingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   PlayerRatingsSlugRoute: PlayerRatingsSlugRoute,
   PlayerRatingsIndexRoute: PlayerRatingsIndexRoute,
