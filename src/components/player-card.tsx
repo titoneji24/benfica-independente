@@ -53,7 +53,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h3 className="break-words font-display text-2xl font-bold uppercase leading-tight">{player.name}</h3>
-              <p className="text-sm text-primary-foreground/70">
+              <p className="text-sm text-primary-foreground/85">
                 {POSITION_LABEL[player.position]}
                 {role === "suplente" && <span className="ml-2 rounded-full bg-primary-foreground/15 px-2 py-0.5 text-[11px] font-bold text-primary-foreground">Entrou</span>}
               </p>
@@ -69,7 +69,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
                 <span className="text-gold">Nota {shown}</span> · <span className="text-primary-foreground/85">{SCALE[shown]}</span>
               </span>
             ) : (
-              <span className="text-primary-foreground/60">Que nota dás?</span>
+              <span className="text-primary-foreground/80">Que nota dás?</span>
             )}
           </div>
         </div>
@@ -108,7 +108,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
             <Button
               onClick={onConfirm}
               disabled={saving || value == null || confirmed}
-              className={`w-full sm:w-auto ${confirmed ? "bg-primary-foreground text-primary hover:bg-primary-foreground/90" : "bg-ink text-ink-foreground hover:bg-ink/90"}`}
+              className={`w-full sm:w-auto ${confirmed ? "bg-primary-foreground text-primary opacity-100 hover:bg-primary-foreground/90 disabled:opacity-100" : "bg-ink text-ink-foreground hover:bg-ink/90"}`}
             >
               {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
               {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
@@ -119,15 +119,15 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
         {result && confirmed && (
           <div className="ml-auto text-right">
             {result.avg == null || result.count === 0 ? (
-              <p className="text-sm text-primary-foreground/70">Ainda não existem avaliações dos benfiquistas para este jogador</p>
+              <p className="text-sm text-primary-foreground/85">Ainda não existem avaliações dos benfiquistas para este jogador</p>
             ) : (
               <>
-                <p className="text-sm font-bold uppercase tracking-wide text-primary-foreground/70">Avaliação dos benfiquistas</p>
+                <p className="text-sm font-bold uppercase tracking-wide text-primary-foreground/85">Avaliação dos benfiquistas</p>
                 <p className="animate-rise font-display text-4xl font-extrabold leading-tight text-gold tabular-nums">
                   {result.avg.toLocaleString("pt-PT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-                  <span className="text-lg font-bold text-primary-foreground/60">/10</span>
+                  <span className="text-lg font-bold text-primary-foreground/75">/10</span>
                 </p>
-                <p className="mt-1 text-sm text-primary-foreground/70">{result.count.toLocaleString("pt-PT")} {result.count === 1 ? "avaliação" : "avaliações"}</p>
+                <p className="mt-1 text-sm text-primary-foreground/85">{result.count.toLocaleString("pt-PT")} {result.count === 1 ? "avaliação" : "avaliações"}</p>
               </>
             )}
           </div>
@@ -150,7 +150,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
             {isMotm ? "Melhor em Campo" : "Escolher Melhor em Campo"}
           </Button>
         ) : (
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary-foreground/60">Treinador</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary-foreground/85">Treinador</span>
         )}
       </div>
     </article>
