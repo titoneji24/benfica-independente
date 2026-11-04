@@ -3,3 +3,4 @@
 - [x] Add per-player save/retry, confirmed progress and independent MOTM submission.
 - [x] Show real MOTM ranking and identify existing demonstration matches.
 - [x] Run rule tests and authenticated desktop/mobile checks.
+- [x] Turn player and coach rating cards red and adapt the surrounding colours.
