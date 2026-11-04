@@ -165,7 +165,7 @@ function MatchVoting({ slug }: { slug: string }) {
       {results.isError && user && <div className="mt-4"><p className="text-sm text-destructive" role="alert">Não foi possível carregar as médias.</p><Button variant="outline" onClick={() => void results.refetch()}>Tentar novamente</Button></div>}
       <div className="mt-8 space-y-10">
         {GROUPS.filter((g) => grouped[g.key]?.length).map((g) => <section key={g.key}>
-          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">{g.label} ({grouped[g.key]?.length})</p>
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground">{g.label} ({grouped[g.key]?.length})</p>
           <div className="space-y-4">{(grouped[g.key] ?? []).map((e) => {
             const confirmed = isScoreConfirmed(selected[e.player.id], saved[e.player.id]);
             const r = resultMap.get(e.player.id);
@@ -176,7 +176,7 @@ function MatchVoting({ slug }: { slug: string }) {
       {canVote && <div className="mt-8 border-t pt-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="flex items-center gap-2 text-sm font-semibold"><Star className="h-4 w-4 text-gold" />{motm ? lineup.find((e) => e.player.id === motm)?.player.name : "Melhor em Campo por escolher"}</p>
-          <Button onClick={() => void submitMotm()} disabled={savingMotm || motm === (mine.data?.motm ?? null)}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A guardar…" : motm === (mine.data?.motm ?? null) && motm ? "Melhor em Campo guardado" : "Confirmar Melhor em Campo"}</Button>
+          <Button onClick={() => void submitMotm()} disabled={savingMotm || motm === (mine.data?.motm ?? null)} className={motm && motm === (mine.data?.motm ?? null) ? "bg-gold text-gold-foreground hover:bg-gold/90" : ""}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A guardar…" : motm === (mine.data?.motm ?? null) && motm ? "Melhor em Campo guardado" : "Confirmar Melhor em Campo"}</Button>
         </div>
         {motmError && <p role="alert" className="mt-2 text-sm text-destructive">{motmError}</p>}
       </div>}
