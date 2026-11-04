@@ -287,6 +287,25 @@ export type Database = {
           voters: number
         }[]
       }
+      get_season_ranking_averages: {
+        Args: { _demo?: boolean; _season: number }
+        Returns: {
+          avg_score: number
+          player_id: string
+        }[]
+      }
+      get_season_ranking_overview: {
+        Args: { _demo?: boolean; _season: number }
+        Returns: {
+          games_rated: number
+          motm_awards: number
+          name: string
+          number: number
+          photo_url: string
+          player_id: string
+          player_position: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

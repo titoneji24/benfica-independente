@@ -22,6 +22,13 @@
       "when": 1792196818890,
       "tag": "0002_allow_motm_cascade_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793758272468,
+      "tag": "0003_season_player_ranking",
+      "breakpoints": true
     }
   ]
 }
