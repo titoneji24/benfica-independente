@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Home, Star, Users, User, LogOut, Shield, Facebook, Instagram, Youtube } from "lucide-react";
+import { Home, Star, Users, User, LogOut, Shield, Facebook, Instagram, Youtube, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/benfica-independente-logo.png.asset.json";
@@ -38,12 +38,13 @@ export function SiteHeader() {
             Benfica <span className="text-primary">Independente</span>
           </span>
         </Link>
-        <nav className="hidden items-center justify-center gap-6 md:flex">
+        <nav className="hidden items-center justify-center gap-4 lg:flex">
           <Link to="/" className={linkCls} activeProps={{ className: "text-foreground" }} activeOptions={{ exact: true }}>Início</Link>
           {SOON.map((s) => (
             <span key={s} className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">{s}</span>
           ))}
           <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>Jogos</Link>
+          <Link to="/ranking" className={linkCls} activeProps={{ className: "text-primary" }}>Ranking</Link>
           <span className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">Comunidade</span>
         </nav>
         <div className="flex items-center gap-2">
@@ -79,9 +80,10 @@ export function MobileNav() {
   const { user } = useAuth();
   const item = "flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-semibold text-muted-foreground";
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
       <Link to="/" className={item} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}><Home className="h-5 w-5" />Início</Link>
       <Link to="/player-ratings" className={item} activeProps={{ className: "text-primary" }}><Star className="h-5 w-5" />Ratings</Link>
+      <Link to="/ranking" className={item} activeProps={{ className: "text-primary" }}><Trophy className="h-5 w-5" />Ranking</Link>
       <span className={`${item} opacity-50`}><Users className="h-5 w-5" />Comunidade</span>
       <Link to={user ? "/perfil" : "/auth"} className={item} activeProps={{ className: "text-primary" }}><User className="h-5 w-5" />{user ? "Perfil" : "Entrar"}</Link>
     </nav>
