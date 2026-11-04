@@ -176,7 +176,7 @@ function MatchVoting({ slug }: { slug: string }) {
       {canVote && <div className="mt-8 border-t pt-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="flex items-center gap-2 text-sm font-semibold"><Star className="h-4 w-4 text-gold" />{motm ? lineup.find((e) => e.player.id === motm)?.player.name : "Melhor em Campo por escolher"}</p>
-          <Button onClick={() => void submitMotm()} disabled={savingMotm || motm === (mine.data?.motm ?? null)}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A guardar…" : motm === (mine.data?.motm ?? null) && motm ? "Melhor em Campo guardado" : "Confirmar Melhor em Campo"}</Button>
+          <Button onClick={() => void submitMotm()} disabled={savingMotm || motm === (mine.data?.motm ?? null)} className={motm && motm === (mine.data?.motm ?? null) ? "bg-gold text-gold-foreground hover:bg-gold/90" : ""}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A guardar…" : motm === (mine.data?.motm ?? null) && motm ? "Melhor em Campo guardado" : "Confirmar Melhor em Campo"}</Button>
         </div>
         {motmError && <p role="alert" className="mt-2 text-sm text-destructive">{motmError}</p>}
       </div>}
