@@ -165,7 +165,7 @@ function MatchVoting({ slug }: { slug: string }) {
       {results.isError && user && <div className="mt-4"><p className="text-sm text-destructive" role="alert">Não foi possível carregar as médias.</p><Button variant="outline" onClick={() => void results.refetch()}>Tentar novamente</Button></div>}
       <div className="mt-8 space-y-10">
         {GROUPS.filter((g) => grouped[g.key]?.length).map((g) => <section key={g.key}>
-          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">{g.label} ({grouped[g.key]?.length})</p>
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground">{g.label} ({grouped[g.key]?.length})</p>
           <div className="space-y-4">{(grouped[g.key] ?? []).map((e) => {
             const confirmed = isScoreConfirmed(selected[e.player.id], saved[e.player.id]);
             const r = resultMap.get(e.player.id);
