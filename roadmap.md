@@ -6,6 +6,6 @@
 - [x] Turn player and coach rating cards red and adapt the surrounding colours.
 
 # Season ranking
-- [ ] Add privacy-safe season averages, evaluated-match totals and MOTM awards.
-- [ ] Add Ranking navigation, sorting and minimum-match filtering.
-- [ ] Verify rules and desktop/mobile ranking flows.
+- [x] Add privacy-safe season averages, evaluated-match totals and MOTM awards.
+- [x] Add Ranking navigation, sorting and minimum-match filtering.
+- [x] Verify rules and desktop/mobile ranking flows.

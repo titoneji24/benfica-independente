@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Home, Star, Users, User, LogOut, Shield, Facebook, Instagram, Youtube, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { seasonForDate } from "@/lib/ranking";
 import logoAsset from "@/assets/benfica-independente-logo.png.asset.json";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -44,7 +45,7 @@ export function SiteHeader() {
             <span key={s} className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">{s}</span>
           ))}
           <Link to="/player-ratings" className={linkCls} activeProps={{ className: "text-primary" }}>Jogos</Link>
-          <Link to="/ranking" search={{ season: new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1, min: 1, sort: "average", direction: "desc", demo: false }} className={linkCls} activeProps={{ className: "text-primary" }}>Ranking</Link>
+          <Link to="/ranking" search={{ season: seasonForDate(new Date()), min: 1, sort: "average", direction: "desc", demo: false }} className={linkCls} activeProps={{ className: "text-primary" }}>Ranking</Link>
           <span className="cursor-default text-sm font-semibold text-muted-foreground/50" title="Em breve">Comunidade</span>
         </nav>
         <div className="flex items-center gap-2">
@@ -83,7 +84,7 @@ export function MobileNav() {
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
       <Link to="/" className={item} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}><Home className="h-5 w-5" />Início</Link>
       <Link to="/player-ratings" className={item} activeProps={{ className: "text-primary" }}><Star className="h-5 w-5" />Ratings</Link>
-      <Link to="/ranking" search={{ season: new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1, min: 1, sort: "average", direction: "desc", demo: false }} className={item} activeProps={{ className: "text-primary" }}><Trophy className="h-5 w-5" />Ranking</Link>
+      <Link to="/ranking" search={{ season: seasonForDate(new Date()), min: 1, sort: "average", direction: "desc", demo: false }} className={item} activeProps={{ className: "text-primary" }}><Trophy className="h-5 w-5" />Ranking</Link>
       <span className={`${item} opacity-50`}><Users className="h-5 w-5" />Comunidade</span>
       <Link to={user ? "/perfil" : "/auth"} className={item} activeProps={{ className: "text-primary" }}><User className="h-5 w-5" />{user ? "Perfil" : "Entrar"}</Link>
     </nav>
