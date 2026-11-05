@@ -28,10 +28,7 @@ export const Route = createFileRoute("/player-ratings/$slug")({
   component: MatchPage,
 });
 
-const GROUPS = [
-  { key: "GR", label: "Guarda-redes" }, { key: "DEF", label: "Defesas" },
-  { key: "MED", label: "Médios" }, { key: "AV", label: "Avançados" }, { key: "TRE", label: "Treinador" },
-];
+import { groupLineup } from "@/lib/lineup";
 type Mine = { ratings: Record<string, number>; motm: string | null };
 
 function MatchPage() {
@@ -89,12 +86,7 @@ function MatchVoting({ slug }: { slug: string }) {
   const [savingMotm, setSavingMotm] = useState(false);
   const [motmError, setMotmError] = useState<string | null>(null);
   const lineup = matchData.data?.lineup ?? [];
-  const grouped = useMemo(() => {
-    const groups: Record<string, LineupEntry[]> = {};
-    for (const entry of lineup) (groups[entry.player.position] ??= []).push(entry);
-    for (const entries of Object.values(groups)) entries.sort((a, b) => a.role === b.role ? (a.player.number ?? 99) - (b.player.number ?? 99) : a.role === "titular" ? -1 : 1);
-    return groups;
-  }, [lineup]);
+  const grouped = useMemo(() => groupLineup<LineupEntry>(lineup), [lineup]);
   const saved = mine.data?.ratings ?? {};
   const selected = { ...saved, ...draft };
   const motm = motmDraft === undefined ? mine.data?.motm ?? null : motmDraft;
@@ -164,9 +156,9 @@ function MatchVoting({ slug }: { slug: string }) {
       {user && <div className="mt-6" aria-live="polite"><p className="mb-2 text-sm font-semibold">{mine.isLoading ? "A carregar as tuas notas…" : `${ratedCount} de ${lineup.length} jogadores avaliados`}</p><Progress value={lineup.length ? ratedCount / lineup.length * 100 : 0} aria-label="Progresso das avaliações confirmadas" /></div>}
       {results.isError && user && <div className="mt-4"><p className="text-sm text-destructive" role="alert">Não foi possível carregar as médias.</p><Button variant="outline" onClick={() => void results.refetch()}>Tentar novamente</Button></div>}
       <div className="mt-8 space-y-10">
-        {GROUPS.filter((g) => grouped[g.key]?.length).map((g) => <section key={g.key}>
-          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground">{g.label} ({grouped[g.key]?.length})</p>
-          <div className="space-y-4">{(grouped[g.key] ?? []).map((e) => {
+        {grouped.map((g) => <section key={g.key}>
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground">{g.label} ({g.entries.length})</p>
+          <div className="space-y-4">{g.entries.map((e) => {
             const confirmed = isScoreConfirmed(selected[e.player.id], saved[e.player.id]);
             const r = resultMap.get(e.player.id);
             return <PlayerCard key={e.player.id} entry={e} value={selected[e.player.id]} isMotm={motm === e.player.id} disabled={!canVote} saving={saving[e.player.id] ?? false} motmDisabled={savingMotm} confirmed={confirmed} error={errors[e.player.id]} onConfirm={() => void confirmScore(e.player.id)} onRate={(n) => { setDraft((d) => ({ ...d, [e.player.id]: n })); setErrors((err) => ({ ...err, [e.player.id]: "" })); }} onMotm={() => setMotmDraft(motm === e.player.id ? null : e.player.id)} result={confirmed && r ? { avg: r.avg_score, count: Number(r.rating_count) } : undefined} />;
