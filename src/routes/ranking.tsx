@@ -61,7 +61,7 @@ function RankingPage() {
     <Suspense fallback={<p className="py-10 text-muted-foreground">A carregar médias…</p>}>
       {!loading && user ? <PersonalRanking key={user.id} rows={data.rows} userId={user.id} /> : <RankingTable rows={data.rows} />}
     </Suspense>
-    <p className="mt-6 text-xs leading-relaxed text-muted-foreground">Média das avaliações por jogo, com igual peso para cada partida. A média fica disponível após avaliares o jogador em todos os jogos contabilizados. Os prémios de Homem do Jogo são atribuídos quando a votação fecha; em caso de empate, ambos recebem o prémio.</p>
+    <p className="mt-6 text-xs leading-relaxed text-muted-foreground">Média das avaliações por jogo, com igual peso para cada partida. A média fica disponível após avaliares o jogador em todos os jogos contabilizados. O prémio de Homem do Jogo vai para o jogador mais votado, mesmo com a votação ainda aberta; em caso de empate, ambos recebem o prémio.</p>
   </div>;
 }
 function PersonalRanking({ rows, userId }: { rows: RankingRow[]; userId: string }) {
