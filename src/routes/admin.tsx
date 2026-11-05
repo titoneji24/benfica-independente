@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { matchesQuery, scoreLine, initials, POSITION_LABEL, type LineupRole, type Player } from "@/lib/ratings";
 import { fileToPhotoDataUrl } from "@/lib/photo";
+import { DEFAULT_COACH_NAME, STARTERS_REQUIRED, lineupError } from "@/lib/lineup";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/admin")({
@@ -245,6 +246,12 @@ function MatchEditor({ matchId, players, onDone }: { matchId: string; players: P
 
   if (!m) return null;
 
+  const coach = players.find((p) => p.position === "TRE" && p.name === DEFAULT_COACH_NAME);
+  const fieldPlayers = players.filter((p) => p.position !== "TRE");
+  const starterPositions = fieldPlayers.filter((p) => lineup[p.id] === "titular").map((p) => p.position);
+  const startersError = lineupError(starterPositions);
+  const gkCount = starterPositions.filter((p) => p === "GR").length;
+
   async function saveMatch() {
     const { error } = await supabase.from("matches").update({
       benfica_goals: m!.benfica_goals === "" ? null : Number(m!.benfica_goals),
@@ -256,9 +263,12 @@ function MatchEditor({ matchId, players, onDone }: { matchId: string; players: P
   }
 
   async function saveLineup() {
-    await supabase.from("match_players").delete().eq("match_id", matchId);
+    if (startersError) { toast.error(startersError); return; }
+    if (!coach) { toast.error(`O treinador ${DEFAULT_COACH_NAME} não existe no plantel.`); return; }
     const order: Record<string, number> = { GR: 1, DEF: 2, MED: 3, AV: 4, TRE: 9 };
-    const rows = Object.entries(lineup).filter(([, r]) => r).map(([player_id, role]) => ({
+    const chosen: Record<string, LineupRole | ""> = { ...lineup, [coach.id]: "treinador" };
+    await supabase.from("match_players").delete().eq("match_id", matchId);
+    const rows = Object.entries(chosen).filter(([, r]) => r).map(([player_id, role]) => ({
       match_id: matchId, player_id, role: role as LineupRole, sort_order: order[players.find((p) => p.id === player_id)?.position ?? "MED"] ?? 3,
     }));
     const { error } = await supabase.from("match_players").insert(rows);
@@ -290,17 +300,21 @@ function MatchEditor({ matchId, players, onDone }: { matchId: string; players: P
 
       <div className="rounded-2xl border bg-card p-5 shadow-soft">
         <h2 className="mb-3 font-display text-2xl font-bold uppercase">Quem jogou</h2>
+        <p className="mb-2 text-sm">Treinador: <strong>{coach ? coach.name : `${DEFAULT_COACH_NAME} (não encontrado no plantel)`}</strong> — sempre incluído.</p>
+        <p className={`mb-3 text-sm font-semibold ${startersError ? "text-destructive" : "text-primary"}`}>
+          Titulares: {starterPositions.length}/{STARTERS_REQUIRED} · Guarda-redes titular: {gkCount}/1{startersError ? ` — ${startersError}` : " ✓"}
+        </p>
         <div className="grid gap-1.5 sm:grid-cols-2">
-          {players.map((p) => (
+          {fieldPlayers.map((p) => (
             <div key={p.id} className="flex items-center justify-between gap-2 rounded-lg border px-3 py-1.5 text-sm">
               <span className="min-w-0 truncate">{p.number ?? "–"} · {p.name}</span>
               <select className="rounded-md border bg-background px-1 py-0.5 text-xs" value={lineup[p.id] ?? ""} onChange={(e) => setLineup({ ...lineup, [p.id]: e.target.value as LineupRole | "" })}>
-                <option value="">Não jogou</option><option value="titular">Titular</option><option value="suplente">Entrou</option><option value="treinador">Treinador</option>
+                <option value="">Não jogou</option><option value="titular">Titular</option><option value="suplente">Entrou</option>
               </select>
             </div>
           ))}
         </div>
-        <button className={`${btn} mt-3`} onClick={saveLineup}>Guardar convocados</button>
+        <button className={`${btn} mt-3`} disabled={!!startersError || !coach} onClick={saveLineup}>Guardar convocados</button>
       </div>
 
       <div className="rounded-2xl border bg-card p-5 shadow-soft">

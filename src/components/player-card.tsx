@@ -27,7 +27,7 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
 
   return (
     <article
-      className={`relative overflow-hidden rounded-3xl border bg-gradient-red p-4 text-primary-foreground shadow-soft transition-all sm:p-5 ${
+      className={`relative overflow-hidden rounded-3xl border ${isCoach ? "bg-gradient-ink" : "bg-gradient-red"} p-4 text-primary-foreground shadow-soft transition-all sm:p-5 ${
         value ? "border-primary-foreground/30 shadow-red" : "border-primary-foreground/15"
       } ${isMotm ? "ring-2 ring-gold" : ""}`}
     >
