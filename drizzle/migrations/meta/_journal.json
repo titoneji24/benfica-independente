@@ -29,6 +29,13 @@
       "when": 1793758272468,
       "tag": "0003_season_player_ranking",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793843032500,
+      "tag": "0004_ranking_motm_count_open_voting",
+      "breakpoints": true
     }
   ]
 }
