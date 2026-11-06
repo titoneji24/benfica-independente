@@ -104,15 +104,11 @@ export function PlayerCard({ entry, value, isMotm, disabled, onRate, onMotm, onC
 
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3" aria-live="polite">
         <div className="min-w-0">
-          {!disabled && (
-            <Button
-              onClick={onConfirm}
-              disabled={saving || value == null || confirmed}
-              className={`w-full sm:w-auto ${confirmed ? "bg-primary-foreground text-primary opacity-100 hover:bg-primary-foreground/90 disabled:opacity-100" : "bg-ink text-ink-foreground hover:bg-ink/90"}`}
-            >
-              {saving ? <Loader2 className="animate-spin" /> : confirmed ? <Check /> : null}
-              {saving ? "A guardar…" : confirmed ? "Nota confirmada" : "Confirmar nota"}
-            </Button>
+          {!disabled && (saving || confirmed) && (
+            <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-foreground/90">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+              {saving ? "A guardar…" : "Nota guardada"}
+            </p>
           )}
           {error && <p role="alert" className="mt-2 inline-block rounded-lg bg-ink/30 px-2.5 py-1 text-sm font-semibold text-primary-foreground">{error}</p>}
         </div>
