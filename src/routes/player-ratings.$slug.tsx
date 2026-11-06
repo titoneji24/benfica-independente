@@ -94,8 +94,7 @@ function MatchVoting({ slug }: { slug: string }) {
   const canVote = !!user && !!match?.voting_open && mine.isSuccess;
   const resultMap = new Map((results.data ?? []).map((r) => [r.player_id, r]));
 
-  async function confirmScore(playerId: string) {
-    const score = selected[playerId];
+  async function confirmScore(playerId: string, score: number) {
     if (!match || !user || !canVote || score == null || pending.current.has(playerId)) return;
     pending.current.add(playerId);
     setSaving((s) => ({ ...s, [playerId]: true }));
@@ -119,7 +118,7 @@ function MatchVoting({ slug }: { slug: string }) {
   }
 
   async function submitMotm() {
-    if (!match || !user || !canVote || savingMotm) return;
+    if (!match || !user || !canVote || savingMotm || !motm || ratedCount < lineup.length) return;
     setSavingMotm(true); setMotmError(null);
     try {
       const response = motm
@@ -128,7 +127,7 @@ function MatchVoting({ slug }: { slug: string }) {
       if (response.error) throw response.error;
       qc.setQueryData<Mine>(mineKey, (old) => ({ ratings: old?.ratings ?? {}, motm }));
       setMotmDraft(undefined);
-      toast.success("Escolha de Melhor em Campo guardada.");
+      toast.success("Avaliações submetidas. Obrigado!");
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["motm-results", match.id] }),
         qc.invalidateQueries({ queryKey: ["profile-history", user.id] }),
@@ -161,15 +160,26 @@ function MatchVoting({ slug }: { slug: string }) {
           <div className="space-y-4">{g.entries.map((e) => {
             const confirmed = isScoreConfirmed(selected[e.player.id], saved[e.player.id]);
             const r = resultMap.get(e.player.id);
-            return <PlayerCard key={e.player.id} entry={e} value={selected[e.player.id]} isMotm={motm === e.player.id} disabled={!canVote} saving={saving[e.player.id] ?? false} motmDisabled={savingMotm} confirmed={confirmed} error={errors[e.player.id]} onConfirm={() => void confirmScore(e.player.id)} onRate={(n) => { setDraft((d) => ({ ...d, [e.player.id]: n })); setErrors((err) => ({ ...err, [e.player.id]: "" })); }} onMotm={() => setMotmDraft(motm === e.player.id ? null : e.player.id)} result={confirmed && r ? { avg: r.avg_score, count: Number(r.rating_count) } : undefined} />;
+            return <PlayerCard key={e.player.id} entry={e} value={selected[e.player.id]} isMotm={motm === e.player.id} disabled={!canVote} saving={saving[e.player.id] ?? false} motmDisabled={savingMotm} confirmed={confirmed} error={errors[e.player.id]} onConfirm={() => undefined} onRate={(n) => { setDraft((d) => ({ ...d, [e.player.id]: n })); setErrors((err) => ({ ...err, [e.player.id]: "" })); void confirmScore(e.player.id, n); }} onMotm={() => setMotmDraft(motm === e.player.id ? null : e.player.id)} result={confirmed && r ? { avg: r.avg_score, count: Number(r.rating_count) } : undefined} />;
           })}</div>
         </section>)}
       </div>
       {canVote && <div className="mt-8 border-t pt-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-center gap-2 text-sm font-semibold"><Star className="h-4 w-4 text-gold" />{motm ? lineup.find((e) => e.player.id === motm)?.player.name : "Melhor em Campo por escolher"}</p>
-          <Button onClick={() => void submitMotm()} disabled={savingMotm || motm === (mine.data?.motm ?? null)} className={motm && motm === (mine.data?.motm ?? null) ? "bg-gold text-gold-foreground hover:bg-gold/90" : ""}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A guardar…" : motm === (mine.data?.motm ?? null) && motm ? "Melhor em Campo guardado" : "Confirmar Melhor em Campo"}</Button>
-        </div>
+        {(() => {
+          const allRated = ratedCount === lineup.length && lineup.length > 0;
+          const submitted = !!motm && motm === (mine.data?.motm ?? null) && allRated;
+          const ready = allRated && !!motm;
+          return <>
+            <div role="status" className={`mb-4 rounded-2xl p-4 text-sm font-semibold ${ready ? "bg-accent text-accent-foreground" : "border border-destructive/40 bg-destructive/10 text-destructive"}`}>
+              <p>Avaliados: {ratedCount} de {lineup.length} (jogadores e treinador){allRated ? " ✓" : ` · faltam ${lineup.length - ratedCount}`}</p>
+              <p>Melhor em Campo: {motm ? `1 de 1 · ${lineup.find((e) => e.player.id === motm)?.player.name ?? ""}` : "0 de 1 · escolhe 1 jogador"}</p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-center gap-2 text-sm font-semibold"><Star className="h-4 w-4 text-gold" />{motm ? lineup.find((e) => e.player.id === motm)?.player.name : "Melhor em Campo por escolher"}</p>
+              <Button onClick={() => void submitMotm()} disabled={savingMotm || !ready || submitted} className={submitted ? "bg-gold text-gold-foreground hover:bg-gold/90 disabled:opacity-100" : ""}>{savingMotm && <Loader2 className="animate-spin" />}{savingMotm ? "A submeter…" : submitted ? "Avaliações submetidas" : "Submeter avaliações"}</Button>
+            </div>
+          </>;
+        })()}
         {motmError && <p role="alert" className="mt-2 text-sm text-destructive">{motmError}</p>}
       </div>}
       <MotmResults results={motmResults.data ?? []} lineup={lineup} loading={motmResults.isLoading} error={motmResults.isError} onRetry={() => void motmResults.refetch()} open={match.voting_open} demo={match.is_demo} />
